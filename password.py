@@ -54,13 +54,14 @@ def open_password_input_window():
 
 
 def open_password_remove_window():
-    response = tkinter.messagebox.askyesno("Confirmer", "Supprimer le(s) mot(s) de passe sélectionné(s) ?")
-    if response:
-        items = passwd_list.curselection()
-        for item in items[::-1]:
-            passwd_list.delete(item)
-            password_array.pop(item)
-        save_to_file()
+    items = passwd_list.curselection()
+    if len(items) > 0:
+        response = tkinter.messagebox.askyesno("Confirmer", "Supprimer le(s) mot(s) de passe sélectionné(s) ?")
+        if response:
+            for item in items[::-1]:
+                passwd_list.delete(item)
+                password_array.pop(item)
+            save_to_file()
 
 
 def save_to_file():
