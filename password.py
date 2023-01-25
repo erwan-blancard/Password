@@ -3,7 +3,7 @@ import tkinter.messagebox
 from tkinter import *
 import hashlib as hash
 
-SPECIAL_CHARS = "!?@#$%^&*"
+SPECIAL_CHARS = "!?@#$%^&*§/:;"
 LIST_FORMAT = "{} → {}"
 
 CHECK_LABELS = [
@@ -35,7 +35,7 @@ def open_password_input_window():
     top.geometry("300x212")
     top.grab_set()
     top.resizable(width=False, height=False)
-    label_password = Label(top, text="Entrez un mot de passe:")
+    label_password = Label(top, text="Entrez le mot de passe:")
     label_password.pack(pady=6)
 
     password_field = Entry(top)
@@ -70,7 +70,8 @@ def save_to_file():
         json.dump(password_dict, file, indent=4)
         file.close()
     except Exception as e:
-        tkinter.messagebox.showerror("Erreur !", "Les mots de passe n'ont pas été sauvegardés correctement:\n\n"+str(e))
+        tkinter.messagebox.showerror("Erreur !",
+                                     "Les mots de passe n'ont pas été sauvegardés correctement:\n\n" + str(e))
 
 
 def load_from_file():
@@ -106,7 +107,8 @@ def open_password_check_window(len_check, letter_up, letter_down, num_check, spe
     label_num_check = Label(top, text=get_char_for_state(num_check) + " " + CHECK_LABELS[3])
     label_num_check.pack(pady=4)
 
-    label_special_char_check = Label(top, text=get_char_for_state(special_char_check) + " " + CHECK_LABELS[4].format(SPECIAL_CHARS))
+    label_special_char_check = Label(top, text=get_char_for_state(special_char_check) + " " + CHECK_LABELS[4].format(
+        SPECIAL_CHARS))
     label_special_char_check.pack(pady=4)
 
     button_cancel = Button(top, text="Ok", command=lambda: close_win(top))
@@ -118,6 +120,7 @@ def check_password(top, keyword, password):
         return
     if len(keyword) < 1:
         keyword = DEFAULT_KEYWORD
+
     len_check = False
     letter_up = False
     letter_down = False
@@ -130,25 +133,12 @@ def check_password(top, keyword, password):
     for c in password:
         if c.isupper():
             letter_up = True
-            break
-
-    for c in password:
         if c.islower():
             letter_down = True
-            break
-
-    for c in password:
         if c.isnumeric():
             num_check = True
-            break
-
-    for c in password:
-        if special_char_check:
-            break
-        for i in range(len(SPECIAL_CHARS)):
-            if c == SPECIAL_CHARS[i]:
-                special_char_check = True
-                break
+        if not c.isalnum():
+            special_char_check = True
 
     if len_check and letter_up and letter_down and num_check and special_char_check:
         add_password(keyword, password)
@@ -160,6 +150,7 @@ def check_password(top, keyword, password):
 def add_password(keyword, password):
     global password_array
     hashed_password = hash.sha256(password.encode())
+
     already_used = False
     for item in password_array:
         if item[1] == hashed_password.hexdigest():
@@ -185,6 +176,7 @@ add_passwd_button.pack()
 passwd_list_frame = Frame(window, pady=16)
 passwd_list = Listbox(passwd_list_frame, width=92, height=16)
 
+# loads saved passwords to Listbox and password_array
 load_from_file()
 
 passwd_list.grid(column=0, row=0, sticky=(N, W, E, S))
